@@ -1,6 +1,7 @@
 package com.client.api.cardapiolog.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -17,6 +18,7 @@ public class Endereco {
     private String estado;
     private String cidade;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Cliente cliente;
 

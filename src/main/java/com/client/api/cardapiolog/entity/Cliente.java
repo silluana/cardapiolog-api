@@ -1,5 +1,6 @@
 package com.client.api.cardapiolog.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -7,10 +8,11 @@ import java.util.List;
 
 @Entity
 @Table(name = "clientes")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Cliente {
 
     @EmbeddedId
-    private ClienteId clienteId;
+    private ClienteId clienteId = new ClienteId();
 
     private String nome;
 
