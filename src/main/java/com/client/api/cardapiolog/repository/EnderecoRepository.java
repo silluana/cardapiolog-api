@@ -12,5 +12,5 @@ public interface EnderecoRepository extends JpaRepository<Endereco, Integer> {
     @Query("SELECT e FROM Endereco e WHERE e.cliente.clienteId.email = :id OR e.cliente.clienteId.cpf = :id")
     List<Endereco> findListByClienteId(@Param("id") final String id);
 
-    List<Endereco> findByCep(String cep);
+    List<Endereco> findByCep(final String cep);
 }

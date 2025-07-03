@@ -1,7 +1,9 @@
 package com.client.api.cardapiolog.controller;
 
+import com.client.api.cardapiolog.dto.CardapioDto;
 import com.client.api.cardapiolog.entity.Cardapio;
 import com.client.api.cardapiolog.repository.CardapioRepository;
+import com.client.api.cardapiolog.repository.projection.CardapioProjection;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,16 @@ public class CardapioController {
     @GetMapping
     public ResponseEntity<List<Cardapio>> consultarTodos() {
         return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAll());
+    }
+
+    @GetMapping("/categoria/{categoriaId}/disponivel")
+    public ResponseEntity<List<CardapioProjection>> consultarTodosPorCategoria(@PathVariable("categoriaId") final Integer categoriaId) {
+        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAllByCategoria(categoriaId));
+    }
+
+    @GetMapping("/nome/{nome}/disponivel")
+    public ResponseEntity<List<CardapioDto>> consultarTodosPorNome(@PathVariable("nome") final String nome) {
+        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAllByNome(nome));
     }
 
     @GetMapping("/{id}")
