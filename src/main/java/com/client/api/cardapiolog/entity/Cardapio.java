@@ -1,6 +1,7 @@
 package com.client.api.cardapiolog.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name="cardapio")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Cardapio {
 
     @Id
@@ -20,6 +22,13 @@ public class Cardapio {
 
     @Column(name = "data_de_registro")
     private LocalDateTime dataDeRegistro = LocalDateTime.now();
+
+    /*
+    * ManyToOne
+    * ManyToMany
+    * OneToMany
+    * OneToOne
+    * */
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Categoria categoria;
