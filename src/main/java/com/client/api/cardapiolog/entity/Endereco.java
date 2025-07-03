@@ -2,10 +2,12 @@ package com.client.api.cardapiolog.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "enderecos")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Endereco {
 
     @Id
