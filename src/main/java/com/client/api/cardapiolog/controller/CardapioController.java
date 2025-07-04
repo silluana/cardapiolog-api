@@ -6,11 +6,16 @@ import com.client.api.cardapiolog.repository.CardapioRepository;
 import com.client.api.cardapiolog.repository.projection.CardapioProjection;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -26,18 +31,29 @@ public class CardapioController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Cardapio>> consultarTodos() {
-        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAll());
+    public ResponseEntity<Page<Cardapio>> consultarTodos(@RequestParam("page") Integer page, @RequestParam("size") Integer size,
+                                                         @RequestParam(value = "sort", required = false) Sort.Direction sort,
+                                                         @RequestParam(value = "property", required = false) String property) {
+        Pageable pageable = getPageable(page, size, sort, property);
+        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAll(pageable));
     }
 
     @GetMapping("/categoria/{categoriaId}/disponivel")
-    public ResponseEntity<List<CardapioProjection>> consultarTodosPorCategoria(@PathVariable("categoriaId") final Integer categoriaId) {
-        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAllByCategoria(categoriaId));
+    public ResponseEntity<Page<CardapioProjection>> consultarTodosPorCategoria(@PathVariable("categoriaId") final Integer categoriaId,
+                                                                               @RequestParam("page") Integer page, @RequestParam("size") Integer size,
+                                                                               @RequestParam(value = "sort", required = false) Sort.Direction sort,
+                                                                               @RequestParam(value = "property", required = false) String property) {
+        Pageable pageable = getPageable(page, size, sort, property);
+        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAllByCategoria(categoriaId, pageable));
     }
 
     @GetMapping("/nome/{nome}/disponivel")
-    public ResponseEntity<List<CardapioDto>> consultarTodosPorNome(@PathVariable("nome") final String nome) {
-        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAllByNome(nome));
+    public ResponseEntity<Page<CardapioDto>> consultarTodosPorNome(@PathVariable("nome") final String nome,
+                                                                   @RequestParam("page") Integer page, @RequestParam("size") Integer size,
+                                                                   @RequestParam(value = "sort", required = false) Sort.Direction sort,
+                                                                   @RequestParam(value = "property", required = false) String property) {
+        Pageable pageable = getPageable(page, size, sort, property);
+        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAllByNome(nome, pageable));
     }
 
     @GetMapping("/{id}")
@@ -72,5 +88,11 @@ public class CardapioController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Elemento não encontrado");
+    }
+
+    private static PageRequest getPageable(Integer page, Integer size, Sort.Direction sort, String property) {
+        return Objects.nonNull(sort)
+                ? PageRequest.of(page, size, Sort.by(sort, property))
+                : PageRequest.of(page, size);
     }
 }

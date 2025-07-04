@@ -4,11 +4,13 @@ import com.client.api.cardapiolog.entity.Categoria;
 import com.client.api.cardapiolog.repository.CategoriaRepository;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,8 +26,9 @@ public class CategoriaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Categoria>> consultarTodos() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.categoriaRepository.findAll());
+    public ResponseEntity<Page<Categoria>> consultarTodos(@RequestParam("page") Integer page, @RequestParam("size") Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(this.categoriaRepository.findAll(pageable));
     }
 
     @GetMapping("/{id}")
