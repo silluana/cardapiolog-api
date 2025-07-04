@@ -4,11 +4,13 @@ import com.client.api.cardapiolog.dto.CardapioDto;
 import com.client.api.cardapiolog.entity.Cardapio;
 import com.client.api.cardapiolog.repository.CardapioRepository;
 import com.client.api.cardapiolog.repository.projection.CardapioProjection;
+import com.client.api.cardapiolog.repository.specification.CardapioSpec;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,21 +41,25 @@ public class CardapioController {
     }
 
     @GetMapping("/categoria/{categoriaId}/disponivel")
-    public ResponseEntity<Page<CardapioProjection>> consultarTodosPorCategoria(@PathVariable("categoriaId") final Integer categoriaId,
+    public ResponseEntity<Page<Cardapio>> consultarTodosPorCategoria(@PathVariable("categoriaId") final Integer categoriaId,
                                                                                @RequestParam("page") Integer page, @RequestParam("size") Integer size,
                                                                                @RequestParam(value = "sort", required = false) Sort.Direction sort,
                                                                                @RequestParam(value = "property", required = false) String property) {
         Pageable pageable = getPageable(page, size, sort, property);
-        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAllByCategoria(categoriaId, pageable));
+        Specification<Cardapio> spec = CardapioSpec.categoria(categoriaId)
+                .and(CardapioSpec.disponivel(true));
+        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAll(spec, pageable));
     }
 
     @GetMapping("/nome/{nome}/disponivel")
-    public ResponseEntity<Page<CardapioDto>> consultarTodosPorNome(@PathVariable("nome") final String nome,
+    public ResponseEntity<List<Cardapio>> consultarTodosPorNome(@PathVariable("nome") final String nome,
                                                                    @RequestParam("page") Integer page, @RequestParam("size") Integer size,
                                                                    @RequestParam(value = "sort", required = false) Sort.Direction sort,
                                                                    @RequestParam(value = "property", required = false) String property) {
         Pageable pageable = getPageable(page, size, sort, property);
-        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAllByNome(nome, pageable));
+        Specification<Cardapio> spec = CardapioSpec.nome(nome)
+                .and(CardapioSpec.disponivel(true));
+        return ResponseEntity.status(HttpStatus.OK).body(cardapioRepository.findAll(spec, pageable).getContent());
     }
 
     @GetMapping("/{id}")
