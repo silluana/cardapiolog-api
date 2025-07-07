@@ -5,12 +5,17 @@ import com.client.api.cardapiolog.entity.ClienteId;
 import com.client.api.cardapiolog.repository.ClienteRepository;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/cliente")
@@ -25,8 +30,13 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Cliente>> consultarTodos() {
-        return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.findAll());
+    public ResponseEntity<Page<Cliente>> consultarTodos(@RequestParam("page") Integer page, @RequestParam("size") Integer size,
+                                                         @RequestParam(value = "sort", required = false) Sort.Direction sort,
+                                                         @RequestParam(value = "property", required = false) String property) {
+        Pageable pageable = Objects.nonNull(sort)
+                ? PageRequest.of(page, size, Sort.by(sort, property))
+                : PageRequest.of(page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.findAll(pageable));
     }
 
     @GetMapping("/{email}/{cpf}")
