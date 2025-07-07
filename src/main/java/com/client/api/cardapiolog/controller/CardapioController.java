@@ -1,9 +1,7 @@
 package com.client.api.cardapiolog.controller;
 
-import com.client.api.cardapiolog.dto.CardapioDto;
 import com.client.api.cardapiolog.entity.Cardapio;
 import com.client.api.cardapiolog.repository.CardapioRepository;
-import com.client.api.cardapiolog.repository.projection.CardapioProjection;
 import com.client.api.cardapiolog.repository.specification.CardapioSpec;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,10 +10,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,7 +74,7 @@ public class CardapioController {
     }
 
     @PostMapping
-    public ResponseEntity<Cardapio> criar(@RequestBody final Cardapio cardapio) throws JsonMappingException {
+    public ResponseEntity<Cardapio> criar(@RequestBody final Cardapio cardapio) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.cardapioRepository.save(cardapio));
     }
 
@@ -94,6 +96,17 @@ public class CardapioController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Elemento não encontrado");
+    }
+
+    @PatchMapping(path = "/{id}/img", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Cardapio> salvarImg(@PathVariable("id") final Integer id, @RequestPart final MultipartFile file) throws IOException {
+        Optional<Cardapio> cardapioEncontrado = this.cardapioRepository.findById(id);
+        if (cardapioEncontrado.isPresent()) {
+            Cardapio cardapio = cardapioEncontrado.get();
+            cardapio.setImg(file.getBytes());
+            return ResponseEntity.status(HttpStatus.OK).body(this.cardapioRepository.save(cardapioEncontrado.get()));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     private static PageRequest getPageable(Integer page, Integer size, Sort.Direction sort, String property) {

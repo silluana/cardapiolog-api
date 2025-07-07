@@ -15,13 +15,20 @@ public class Cardapio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String nome;
+
     private String descricao;
+
     private Boolean disponivel;
+
     private BigDecimal valor;
 
     @Column(name = "data_de_registro")
     private LocalDateTime dataDeRegistro = LocalDateTime.now();
+
+    @Lob
+    private byte[] img;
 
     /*
     * ManyToOne
@@ -97,6 +104,14 @@ public class Cardapio {
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+
+    public byte[] getImg() {
+        return img;
+    }
+
+    public void setImg(byte[] img) {
+        this.img = img;
     }
 
     @Override
