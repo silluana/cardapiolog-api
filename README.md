@@ -13,7 +13,6 @@ Este projeto é uma aplicação backend desenvolvida com **Spring Boot** e **Spr
 - Banco de Dados MySQL
 - Maven
 
----
 
 ## 🧠 Objetivos do Projeto
 
@@ -23,7 +22,6 @@ Este projeto é uma aplicação backend desenvolvida com **Spring Boot** e **Spr
 
 - Simular um fluxo real de pedidos e gerenciamento de cardápio
 
----
 
 ## 📚 Funcionalidades
 
@@ -41,7 +39,6 @@ Este projeto é uma aplicação backend desenvolvida com **Spring Boot** e **Spr
 
 - Histórico de pedidos realizados
 
----
 
 ## Créditos
 
